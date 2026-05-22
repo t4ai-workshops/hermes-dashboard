@@ -4,9 +4,15 @@
 async function loadConfigPanel() {
   let d;
   try {
-    const r = await fetch('data.json?t=' + Date.now());
-    d = await r.json();
-  } catch(e) { d = null; }
+    const r = await fetch('/api/data');
+    if (r.ok) d = await r.json();
+    else throw new Error('HTTP ' + r.status);
+  } catch(e) {
+    try {
+      const r = await fetch('data.json?t=' + Date.now());
+      d = await r.json();
+    } catch(e2) { d = null; }
+  }
 
   // Server info
   const srv = d?.server || {};
@@ -20,8 +26,10 @@ async function loadConfigPanel() {
     <div class="info-row"><span class="key">Processen</span><span class="val">${srv.processes||'?'} totaal (${srv.python_processes||'?'} python)</span></div>
     <div class="info-row"><span class="key">Gateway default</span><span class="val" style="color:${(d?.gateway?.default||'')==='active'?'var(--accent)':'var(--danger)'}">${d?.gateway?.default||'?'}</span></div>
     <div class="info-row"><span class="key">Gateway webdesigner</span><span class="val" style="color:${(d?.gateway?.webdesigner||'')==='active'?'var(--accent)':'var(--danger)'}">${d?.gateway?.webdesigner||'?'}</span></div>
-    <div class="info-row"><span class="key">Data verzameld</span><span class="val" style="font-size:11px;color:var(--muted)">${new Date(d?.collected_at||Date.now()).toLocaleTimeString('nl-NL')}</span></div>
-  ` : '<div class="loading">⏳ Server data wordt verzameld...<br><small>De data collector draait elke 15 minuten via cron.</small></div>';
+    <div class="info-row"><span class="key">Hermes API</span><span class="val" style="color:${(d?.hermes_api?.status||'')==='ok'?'var(--accent)':'var(--warn)'}">${d?.hermes_api?.status||'onbekend'}</span></div>
+    <div class="info-row"><span class="key">Data mode</span><span class="val" style="font-size:11px;color:var(--text2)">${d?.mode||'real-time'} · ${d?.version||'?'}</span></div>
+    <div class="info-row"><span class="key">Geüpdatet</span><span class="val" style="font-size:11px;color:var(--muted)">${new Date(d?.collected_at||Date.now()).toLocaleTimeString('nl-NL')}</span></div>
+  ` : '<div class="loading">⏳ Server data wordt verzameld...<br><small>Deze data wordt live opgehaald bij elke pagina refresh.</small></div>';
 
   // Credentials
   const creds = d?.auth?.credentials || [];
@@ -44,15 +52,22 @@ async function loadConfigPanel() {
     <button class="btn" type="button" id="savePrefs">Opslaan</button>
     <span id="prefStatus" style="font-size:12px;color:var(--accent);display:none">✅ Opgeslagen</span>
   `;
-  document.getElementById('savePrefs').addEventListener('click', () => {
+  document.getElementById('savePrefs').addEventListener('click', async () => {
     const p = {
       theme: document.getElementById('prefTheme').value,
       language: document.getElementById('prefLang').value,
       refresh_interval: parseInt(document.getElementById('prefInterval').value),
       accent_color: document.getElementById('prefAccent').value
     };
+    // Opslaan via POST naar server (persistent op schijf)
+    try {
+      await fetch('/api/preferences', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(p)
+      });
+    } catch(e) { /* fallback naar localStorage als server offline */ }
     localStorage.setItem('hermes_prefs', JSON.stringify(p));
-    // Pas thema aan
     if (p.theme === 'light') {
       document.documentElement.style.setProperty('--bg', '#f8fafc');
       document.documentElement.style.setProperty('--text', '#1e293b');

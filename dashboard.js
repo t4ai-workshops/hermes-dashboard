@@ -1,7 +1,7 @@
 (function() {
 'use strict';
 
-let grid, charts = {}, data = null;
+let grid, charts = {}, data = null, refreshTimer = null;
 
 function fmt(n) { return n != null ? n.toLocaleString('nl-NL') : '—'; }
 function fmtCost(n) { return n != null ? '€' + n.toFixed(2) : '—'; }
@@ -9,19 +9,33 @@ function fmtDate(ts) { return ts ? new Date(ts * 1000).toLocaleDateString('nl-NL
 
 async function loadData() {
   try {
-    const r = await fetch('data.json?t=' + Date.now());
+    const r = await fetch('/api/data');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
     data = await r.json();
+    return true;
   } catch(e) {
-    data = null;
+    // Fallback naar oude data.json voor backwards compat
+    try {
+      const r = await fetch('data.json?t=' + Date.now());
+      data = await r.json();
+      return true;
+    } catch(e2) {
+      data = null;
+      return false;
+    }
   }
 }
 
 function initStats() {
   const s = data?.sessions || {};
   document.getElementById('statSessions').textContent = fmt(s.sessions);
-  document.getElementById('statSessionsSub').textContent = s.sessions ? (s.telegram_sessions||0) + ' tg · ' + (s.cli_sessions||0) + ' cli · ' + (s.cron_sessions||0) + ' cron' : 'laden...';
+  document.getElementById('statSessionsSub').textContent = s.sessions
+    ? (s.telegram_sessions||0) + ' tg · ' + (s.cli_sessions||0) + ' cli · ' + (s.cron_sessions||0) + ' cron'
+    : 'laden...';
   document.getElementById('statMessages').textContent = fmt(s.messages);
-  document.getElementById('statMessagesSub').textContent = s.messages ? (s.messages_by_role?.user||'—') + ' user · ' + (s.messages_by_role?.assistant||'—') + ' assistant' : 'laden...';
+  document.getElementById('statMessagesSub').textContent = s.messages
+    ? (s.messages_by_role?.user||'—') + ' user · ' + (s.messages_by_role?.assistant||'—') + ' assistant'
+    : 'laden...';
   document.getElementById('statTokens').textContent = s.input_tokens != null ? fmt(s.input_tokens + s.output_tokens) : '—';
   document.getElementById('statTokensSub').textContent = s.input_tokens != null ? 'in ' + fmt(s.input_tokens) + ' · out ' + fmt(s.output_tokens) : 'laden...';
   document.getElementById('statCost').textContent = fmtCost(s.estimated_cost_usd);
@@ -33,20 +47,30 @@ function initStats() {
   const ag = data?.server?.python_processes;
   document.getElementById('agentCount').textContent = ag ? ag + ' agents' : '';
   document.getElementById('msgCount').textContent = s.messages ? fmt(s.messages) + ' berichten' : '';
+
+  // Live indicator
+  const live = document.getElementById('liveIndicator');
+  if (data?.hermes_api?.status === 'ok') {
+    live.style.background = '#22c55e';
+    live.title = 'Hermes API: online';
+  } else {
+    live.style.background = '#f59e0b';
+    live.title = 'Hermes API: offline (' + (data?.hermes_api?.status || '?') + ')';
+  }
 }
 
 const WIDGETS = [
   { id:'agents', title:'Agent Activiteit', icon:'👤', tag:'actief', w:4,h:14,
     render(el) {
       const agents = [
-        {name:'Edgar (hoofd)', status:'active', badge:'main', meta:'gesprek gaande'},
+        {name:'Edgar (hoofd)', status: data?.hermes_api?.status === 'ok' ? 'active' : 'idle', badge:'main', meta:'gesprek gaande'},
         {name:'Mail Monitor', status:'idle', badge:'sub', meta:'cron elke 30m'},
         {name:'Briefing Agent', status:'idle', badge:'sub', meta:'cron 09:00'},
         {name:'Bambu MCP', status:'idle', badge:'sub', meta:'4 tools idle'}
       ];
       el.innerHTML = `<div class="card"><div class="card-header"><h3>👤 Agent Activiteit</h3><span class="tag green">${data?.server?.python_processes||'?'} actief</span></div><div class="card-body">${
         agents.map(a => `<div class="agent-item"><span class="agent-status ${a.status}"></span><span class="agent-name">${a.name}</span><span class="agent-badge ${a.badge}">${a.badge}</span><span class="agent-meta">${a.meta}</span></div>`).join('')
-      }</div><div class="card-footer"><span>${fmt(data?.sessions?.sessions)} sessies · ${fmt(data?.sessions?.messages)} berichten</span></div></div>`;
+      }</div><div class="card-footer"><span>${fmt(data?.sessions?.sessions)} sessies · ${fmt(data?.sessions?.messages)} berichten</span><span style="color:${data?.hermes_api?.status==='ok'?'var(--accent)':'var(--warn)'}">API: ${data?.hermes_api?.status||'?'}</span></div></div>`;
     }
   },
   { id:'tokens', title:'Token Verbruik', icon:'⚡', tag:'vandaag', w:4,h:14,
@@ -113,7 +137,7 @@ const WIDGETS = [
   { id:'apikeys', title:'API Keys', icon:'🔑', tag:'status', w:4,h:14,
     render(el) {
       const creds = data?.auth?.credentials || [];
-      const rows = creds.map(c => `<tr><td><span class="status-dot ${c.status==='ok'?'ok':'err'}"></span>${c.provider}</td><td style="text-align:right;color:var(--text2)">${c.status==='ok'?'✓ OK':'✗ '+c.last_error||'error'}</td></tr>`).join('');
+      const rows = creds.map(c => `<tr><td><span class="status-dot ${c.status==='ok'?'ok':'err'}'></span>${c.provider}</td><td style="text-align:right;color:var(--text2)\">${c.status==='ok'?'✓ OK':'✗ '+c.last_error||'error'}</td></tr>`).join('');
       el.innerHTML = `<div class="card"><div class="card-header"><h3>🔑 API Keys</h3><span class="tag">${creds.length} totaal</span></div><div class="card-body"><table class="creds-table">${rows||'<tr><td>Geen credentials data</td></tr>'}</table></div></div>`;
     }
   },
@@ -165,7 +189,6 @@ function initWidgets() {
     float: false, cellHeight: 20, column: 10, margin: 8, animate: false,
     children: WIDGETS.map(w => ({ id:w.id, w:w.w, h:w.h, x:0, y:0, content:'<div class="loading">laden...</div>' }))
   });
-  // Zet y posities
   let y = 0;
   WIDGETS.forEach((w,i) => {
     const el = gridEl.querySelector(`[gs-id="${w.id}"]`);
@@ -176,7 +199,6 @@ function initWidgets() {
       w.render(el.querySelector('.grid-stack-item-content') || el);
     }
   });
-  // Herlaad charts bij resize
   grid.on('change', () => { setTimeout(renderCharts, 500); });
 }
 
@@ -184,17 +206,29 @@ function renderCharts() {
   WIDGETS.forEach(w => {
     if (w.id === 'agents' || w.id === 'providers' || w.id === 'apikeys' || w.id === 'activity') return;
     const el = document.getElementById(w.id + 'Chart');
-    if (el) { /* charts are queued via queueChart already */ }
+    if (el) { /* charts zijn via queueChart al geinit */ }
   });
+}
+
+function startRefresh() {
+  const interval = (data?.preferences?.refresh_interval || 15) * 60 * 1000;
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(async () => {
+    await loadData();
+    if (!data) return;
+    initStats();
+    initWidgets();
+  }, interval);
 }
 
 async function init() {
   document.getElementById('panelDashboard').classList.remove('hidden');
   document.getElementById('panelConfig').classList.add('hidden');
-  await loadData();
-  if (!data) { document.querySelectorAll('.value').forEach(e => e.textContent = '⏳'); return; }
+  const ok = await loadData();
+  if (!ok) { document.querySelectorAll('.value').forEach(e => e.textContent = '⏳'); return; }
   initStats();
   initWidgets();
+  startRefresh();
 }
 
 document.addEventListener('DOMContentLoaded', init);
