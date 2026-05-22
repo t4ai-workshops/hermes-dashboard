@@ -2,72 +2,56 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>HERMES — Dashboard</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@11.4.0/dist/gridstack.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@10/dist/gridstack.min.css">
 <link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/gridstack@11.4.0/dist/gridstack-all.js" defer></script>
-<script src="dashboard.js" defer></script>
 </head>
 <body>
-
 <aside class="sidebar">
-  <div class="sidebar-logo">
-    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="2" width="24" height="24" rx="6" stroke="#22c55e" stroke-width="2.5" fill="none"/><path d="M8 14h12M14 8v12" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round"/></svg>
-    <span>HERMES</span>
+  <div class="sidebar-header">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    <span class="logo">HERMES</span>
   </div>
-  <nav class="sidebar-nav">
-    <div class="nav-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> Dashboard</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg> Agents</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Usage</div>
-    <div class="nav-section">SYSTEEM</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> Providers</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Logs</div>
-    <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Settings</div>
+  <nav class="nav">
+    <a class="nav-item active" data-panel="dashboard" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> Dashboard</a>
+    <a class="nav-item" data-panel="config" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Configuratie</a>
   </nav>
   <div class="sidebar-footer">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    <span class="version">v0.3.0</span>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    <span class="version">v0.4.0</span>
   </div>
 </aside>
-
-<div class="main" id="mainContent">
+<main class="main" id="main">
   <div class="topbar">
-    <div class="topbar-title">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-      Dashboard
-    </div>
-    <div class="topbar-pills">
-      <span class="pill"><span class="dot green"></span>8 agents</span>
-      <span class="pill"><span class="dot blue"></span>991 berichten</span>
-      <span class="pill"><span class="dot orange"></span>vandaag</span>
-    </div>
-    <div class="topbar-spacer"></div>
-    <div class="topbar-actions">
-      <div class="layout-controls">
-        <span class="layout-badge">📐 sleep & resize</span>
-        <button class="topbar-btn" onclick="resetLayout()" title="Reset widget layout">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-          Reset
-        </button>
-      </div>
+    <h1 id="pageTitle">Dashboard</h1>
+    <div class="topbar-info">
+      <span id="agentCount">—</span>
+      <span id="msgCount">—</span>
+      <span id="liveIndicator" class="live-dot"></span>
     </div>
   </div>
-  <div class="content">
-    <div class="stats-grid">
-      <div class="stat-card"><div class="label">Actieve Agents</div><div class="value">3</div><div class="sublabel"><span class="delta up">▲ 12%</span> t.o.v. gisteren</div></div>
-      <div class="stat-card"><div class="label">Sessies</div><div class="value">29</div><div class="sublabel">1.304 berichten · ~421K tokens</div></div>
-      <div class="stat-card"><div class="label">Totale Tokens</div><div class="value">421K</div><div class="sublabel">geschat uit berichtvolume</div></div>
-      <div class="stat-card"><div class="label">Geschatte Kosten</div><div class="value">€2,83</div><div class="sublabel"><span class="delta up">▲ 8%</span> t.o.v. gisteren</div></div>
-      <div class="stat-card"><div class="label">Providers</div><div class="value">4</div><div class="sublabel">DeepSeek · OpenRouter · Gemini · Jetson</div></div>
-      <div class="stat-card"><div class="label">API Calls</div><div class="value">7.200+</div><div class="sublabel">sinds installatie 20 mei</div></div>
+  <div id="panelDashboard">
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="label">Sessies</div><div class="value" id="statSessions">—</div><div class="sublabel" id="statSessionsSub">laden...</div></div>
+      <div class="stat-card"><div class="label">Berichten</div><div class="value" id="statMessages">—</div><div class="sublabel" id="statMessagesSub">laden...</div></div>
+      <div class="stat-card"><div class="label">Tokens</div><div class="value" id="statTokens">—</div><div class="sublabel" id="statTokensSub">laden...</div></div>
+      <div class="stat-card"><div class="label">Kosten</div><div class="value" id="statCost">—</div><div class="sublabel" id="statCostSub">laden...</div></div>
+      <div class="stat-card"><div class="label">Providers</div><div class="value" id="statProviders">—</div><div class="sublabel" id="statProvidersSub">laden...</div></div>
+      <div class="stat-card"><div class="label">API Calls</div><div class="value" id="statApiCalls">—</div><div class="sublabel" id="statApiCallsSub">laden...</div></div>
     </div>
     <div class="grid-stack" id="widgetGrid"></div>
   </div>
-</div>
-
+  <div id="panelConfig" class="hidden">
+    <div class="config-grid">
+      <div class="card config-section" id="configServer"><div class="card-header"><h3>🖥 Server Info</h3></div><div class="card-body" id="serverInfoBody">laden...</div></div>
+      <div class="card config-section" id="configCreds"><div class="card-header"><h3>🔑 API Keys & Credentials</h3></div><div class="card-body" id="credsBody">laden...</div></div>
+      <div class="card config-section" id="configPrefs"><div class="card-header"><h3>⚙ Voorkeuren</h3></div><div class="card-body"><form id="prefsForm"></form></div></div>
+    </div>
+  </div>
+</main>
+<script defer src="https://cdn.jsdelivr.net/npm/gridstack@10/dist/gridstack-all.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script defer src="dashboard.js"></script>
+<script defer src="config-panel.js"></script>
 </body>
 </html>
