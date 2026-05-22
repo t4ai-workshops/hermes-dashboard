@@ -186,16 +186,17 @@ function initWidgets() {
   const gridEl = document.getElementById('widgetGrid');
   gridEl.innerHTML = '';
   grid = GridStack.init({
-    float: false, cellHeight: 20, column: 10, margin: 8, animate: false,
-    children: WIDGETS.map(w => ({ id:w.id, w:w.w, h:w.h, x:0, y:0, content:'<div class="loading">laden...</div>' }))
+    float: false, cellHeight: 20, column: 12, margin: 8, animate: false
   });
+  // GridStack v10: addWidget met content param ipv children in init
   let y = 0;
   WIDGETS.forEach((w,i) => {
+    const x = (i % 3) * 4;
+    if (i > 0 && i % 3 === 0) y += WIDGETS[i-3]?.h || 14;
+    grid.addWidget({ id:w.id, w:w.w, h:w.h, x, y,
+      content:'<div class="loading">laden...</div>' });
     const el = gridEl.querySelector(`[gs-id="${w.id}"]`);
     if (el) {
-      grid.update(el, {x:(i%3)*3||(i%2)*5||0, y, w:w.w, h:w.h});
-      if ((i+1) % 3 === 0) y += w.h;
-      else if ((i+1) % 2 === 0 && i > 4) y += w.h;
       w.render(el.querySelector('.grid-stack-item-content') || el);
     }
   });
