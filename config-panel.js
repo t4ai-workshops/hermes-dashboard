@@ -1,97 +1,149 @@
-(function() {
-'use strict';
+export class ConfigPanel {
+  constructor(container) { this.container = container; }
 
-async function loadConfigPanel() {
-  let d;
-  try {
-    const r = await fetch('/api/data');
-    if (r.ok) d = await r.json();
-    else throw new Error('HTTP ' + r.status);
-  } catch(e) {
-    try {
-      const r = await fetch('data.json?t=' + Date.now());
-      d = await r.json();
-    } catch(e2) { d = null; }
+  showSpinner() {
+    const el = document.createElement('div');
+    el.className = 'spinner';
+    this.container.appendChild(el);
+  }
+  hideSpinner() {
+    const el = this.container.querySelector('.spinner');
+    if (el) el.remove();
   }
 
-  // Server info
-  const srv = d?.server || {};
-  document.getElementById('serverInfoBody').innerHTML = srv.hostname ? `
-    <div class="info-row"><span class="key">Hostname</span><span class="val">${srv.hostname}</span></div>
-    <div class="info-row"><span class="key">Besturingssysteem</span><span class="val">${srv.os||'?'}</span></div>
-    <div class="info-row"><span class="key">Python</span><span class="val">${srv.python||'?'}</span></div>
-    <div class="info-row"><span class="key">Uptime</span><span class="val">${srv.uptime_days||'?'} dagen</span></div>
-    <div class="info-row"><span class="key">Geheugen</span><span class="val">${srv.mem_used_pct||'?'}% gebruikt</span></div>
-    <div class="info-row"><span class="key">Load</span><span class="val">${srv.load_1m||'?'} / ${srv.load_5m||'?'} / ${srv.load_15m||'?'}</span></div>
-    <div class="info-row"><span class="key">Processen</span><span class="val">${srv.processes||'?'} totaal (${srv.python_processes||'?'} python)</span></div>
-    <div class="info-row"><span class="key">Gateway default</span><span class="val" style="color:${(d?.gateway?.default||'')==='active'?'var(--accent)':'var(--danger)'}">${d?.gateway?.default||'?'}</span></div>
-    <div class="info-row"><span class="key">Gateway webdesigner</span><span class="val" style="color:${(d?.gateway?.webdesigner||'')==='active'?'var(--accent)':'var(--danger)'}">${d?.gateway?.webdesigner||'?'}</span></div>
-    <div class="info-row"><span class="key">Hermes API</span><span class="val" style="color:${(d?.hermes_api?.status||'')==='ok'?'var(--accent)':'var(--warn)'}">${d?.hermes_api?.status||'onbekend'}</span></div>
-    <div class="info-row"><span class="key">Data mode</span><span class="val" style="font-size:11px;color:var(--text2)">${d?.mode||'real-time'} · ${d?.version||'?'}</span></div>
-    <div class="info-row"><span class="key">Geüpdatet</span><span class="val" style="font-size:11px;color:var(--muted)">${new Date(d?.collected_at||Date.now()).toLocaleTimeString('nl-NL')}</span></div>
-  ` : '<div class="loading">⏳ Server data wordt verzameld...<br><small>Deze data wordt live opgehaald bij elke pagina refresh.</small></div>';
+  showToast(msg, type) {
+    const t = document.createElement('div');
+    t.className = `toast toast-${type}`;
+    t.textContent = msg;
+    this.container.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
 
-  // Credentials
-  const creds = d?.auth?.credentials || [];
-  const envKeys = d?.auth?.env_keys_found || [];
-  document.getElementById('credsBody').innerHTML = creds.length ? `
-    <table class="creds-table">
-      <tr><th>Provider</th><th>Type</th><th>Status</th></tr>
-      ${creds.map(c => `<tr><td><span class="status-dot ${c.status==='ok'?'ok':'err'}"></span>${c.provider}</td><td style="color:var(--text2)">${c.type}</td><td style="text-align:right;color:${c.status==='ok'?'var(--accent)':'var(--danger)'}">${c.status==='ok'?'✓ Actief':c.last_error||'⚠ Error'}</td></tr>`).join('')}
-    </table>
-    <div style="margin-top:12px;font-size:12px;color:var(--text2)">Gedetecteerde API keys in .env: ${envKeys.join(', ')||'geen'}</div>
-  ` : '<div class="loading">⏳ Credentials data wordt verzameld...</div>';
+  _el(tag, cls, attrs) {
+    const el = document.createElement(tag);
+    if (cls) el.className = cls;
+    if (attrs) Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+    return el;
+  }
 
-  // Preferences form
-  const prefs = d?.preferences || { theme:'dark', language:'nl', refresh_interval:15, accent_color:'#22c55e' };
-  document.getElementById('prefsForm').innerHTML = `
-    <label>Thema <select id="prefTheme"><option ${prefs.theme==='dark'?'selected':''} value="dark">Donker</option><option ${prefs.theme==='light'?'selected':''} value="light">Licht</option></select></label>
-    <label>Taal <select id="prefLang"><option ${prefs.language==='nl'?'selected':''} value="nl">Nederlands</option><option ${prefs.language==='en'?'selected':''} value="en">English</option></select></label>
-    <label>Ververs interval <select id="prefInterval"><option ${prefs.refresh_interval===5?'selected':''} value="5">5 min</option><option ${prefs.refresh_interval===15?'selected':''} value="15">15 min</option><option ${prefs.refresh_interval===30?'selected':''} value="30">30 min</option><option ${prefs.refresh_interval===60?'selected':''} value="60">60 min</option></select></label>
-    <label>Accent kleur <input type="color" id="prefAccent" value="${prefs.accent_color}"></label>
-    <button class="btn" type="button" id="savePrefs">Opslaan</button>
-    <span id="prefStatus" style="font-size:12px;color:var(--accent);display:none">✅ Opgeslagen</span>
-  `;
-  document.getElementById('savePrefs').addEventListener('click', async () => {
-    const p = {
-      theme: document.getElementById('prefTheme').value,
-      language: document.getElementById('prefLang').value,
-      refresh_interval: parseInt(document.getElementById('prefInterval').value),
-      accent_color: document.getElementById('prefAccent').value
-    };
-    // Opslaan via POST naar server (persistent op schijf)
+  _section(title) {
+    const s = this._el('section'), h = this._el('h3');
+    h.textContent = title;
+    s.appendChild(h);
+    this.container.appendChild(s);
+    return s;
+  }
+
+  renderAPIConnection() {
+    const s = this._section('API Connection');
+    const u = this._el('input', '', { type: 'url', id: 'api-url', placeholder: 'API URL' });
+    const k = this._el('input', '', { type: 'password', id: 'api-key', placeholder: 'API Key' });
+    const b = this._el('button', 'btn-test-connection');
+    b.textContent = 'Test Connection';
+    b.addEventListener('click', () => this.testConnection());
+    s.append(u, k, b);
+    return s;
+  }
+
+  async testConnection() {
+    const u = this.container.querySelector('#api-url').getAttribute('value') || '';
+    const k = this.container.querySelector('#api-key').getAttribute('value') || '';
     try {
-      await fetch('/api/preferences', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(p)
-      });
-    } catch(e) { /* fallback naar localStorage als server offline */ }
-    localStorage.setItem('hermes_prefs', JSON.stringify(p));
-    if (p.theme === 'light') {
-      document.documentElement.style.setProperty('--bg', '#f8fafc');
-      document.documentElement.style.setProperty('--text', '#1e293b');
+      const r = await fetch(u, { headers: { Authorization: `Bearer ${k}` } });
+      this.showToast(r.ok ? 'Connection successful' : `Connection failed (${r.status})`, r.ok ? 'success' : 'error');
+    } catch { this.showToast('Connection error', 'error'); }
+  }
+
+  renderCredentialsOverview(creds) {
+    const s = this._section('Credentials');
+    if (!creds || !creds.length) {
+      const p = this._el('p');
+      p.textContent = 'No credentials configured.';
+      s.appendChild(p);
+    } else for (const c of creds) {
+      const r = this._el('div', 'credential-row');
+      const n = this._el('span');
+      n.textContent = c.name;
+      const b = this._el('span', `status-badge ${c.status}`);
+      b.textContent = c.status;
+      r.append(n, b);
+      s.appendChild(r);
     }
-    document.getElementById('prefStatus').style.display = 'inline';
-    setTimeout(() => document.getElementById('prefStatus').style.display = 'none', 2000);
-  });
-}
+    return s;
+  }
 
-// Nav toggle
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', e => {
-      e.preventDefault();
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      item.classList.add('active');
-      const panel = item.dataset.panel;
-      document.getElementById('panelDashboard').classList.toggle('hidden', panel !== 'dashboard');
-      document.getElementById('panelConfig').classList.toggle('hidden', panel !== 'config');
-      document.getElementById('pageTitle').textContent = panel === 'dashboard' ? 'Dashboard' : 'Configuratie';
-      if (panel === 'config') loadConfigPanel();
-      if (panel === 'dashboard' && typeof init === 'function') init();
+  renderServerInfo(info) {
+    const s = this._section('Server Info');
+    if (info) for (const [k, v] of Object.entries(info)) {
+      const r = this._el('div', 'info-row');
+      r.textContent = `${k}: ${v}`;
+      s.appendChild(r);
+    }
+    return s;
+  }
+
+  renderPreferences(prefs = {}) {
+    const s = this._section('Preferences');
+
+    const slider = this._el('input', '', { type: 'range', id: 'refresh-interval', min: '5', max: '60' });
+    slider.setAttribute('value', String(prefs.refreshInterval || 30));
+    const sl = this._el('label');
+    sl.textContent = 'Refresh Interval (s)';
+    s.append(sl, slider);
+
+    const toggle = this._el('input', '', { type: 'checkbox', id: 'theme-toggle' });
+    if (prefs.theme === 'dark') toggle.setAttribute('checked', '');
+    const tl = this._el('label');
+    tl.textContent = 'Dark Theme';
+    s.append(tl, toggle);
+
+    const lang = this._el('select', '', { id: 'language-selector' });
+    ['nl', 'en', 'fr', 'de'].forEach(l => {
+      const o = this._el('option');
+      o.textContent = l;
+      o.setAttribute('value', l);
+      if (l === (prefs.language || 'nl')) o.setAttribute('selected', '');
+      lang.appendChild(o);
     });
-  });
-});
+    const ll = this._el('label');
+    ll.textContent = 'Language';
+    s.append(ll, lang);
 
-})();
+    const save = this._el('button', 'btn-save-preferences');
+    save.textContent = 'Save Preferences';
+    save.addEventListener('click', () => this.handleSavePreferences());
+    s.appendChild(save);
+    return s;
+  }
+
+  async handleSavePreferences() {
+    const v = (id) => this.container.querySelector(id).getAttribute('value') || '';
+    const body = {
+      refreshInterval: parseInt(v('#refresh-interval') || '30'),
+      theme: this.container.querySelector('#theme-toggle').getAttribute('checked') !== null ? 'dark' : 'light',
+      language: v('#language-selector') || 'nl',
+    };
+    try {
+      const r = await fetch('/api/preferences', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+      });
+      this.showToast(r.ok ? 'Preferences saved' : 'Save failed', r.ok ? 'success' : 'error');
+    } catch { this.showToast('Save error', 'error'); }
+  }
+
+  async init() {
+    this.showSpinner();
+    try {
+      const r = await fetch('/api/data');
+      const d = await r.json();
+      this.hideSpinner();
+      this.renderAPIConnection();
+      this.renderCredentialsOverview(d.credentials || []);
+      this.renderServerInfo(d.serverinfo || {});
+      this.renderPreferences(d.preferences || {});
+    } catch {
+      this.hideSpinner();
+      this.showToast('Failed to load config data', 'error');
+    }
+  }
+}
