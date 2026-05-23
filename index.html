@@ -10,16 +10,14 @@
 <body>
 <aside class="sidebar">
   <div class="sidebar-header">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+    <svg class="logo-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#accentGrad)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
     <span class="logo">HERMES</span>
   </div>
   <nav class="nav">
-    <a class="nav-item active" data-panel="dashboard" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> Dashboard</a>
-    <a class="nav-item" data-panel="config" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Configuratie</a>
+    <a class="nav-item active" data-panel="dashboard" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> <span>Dashboard</span></a>
+    <a class="nav-item" data-panel="config" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> <span>Configuratie</span></a>
   </nav>
-  <div class="sidebar-footer">
-    <span class="version">v0.5.0</span>
-  </div>
+  <div class="sidebar-footer"><span class="version">v2.0.0</span></div>
 </aside>
 <main class="main" id="main">
   <div class="topbar">
@@ -32,23 +30,24 @@
   </div>
   <div id="panelDashboard">
     <div class="stats-grid" id="statsGrid">
-      <div class="stat-card"><div class="label">Sessies</div><div class="value" id="statSessions">—</div><div class="sublabel" id="statSessionsSub">laden...</div></div>
-      <div class="stat-card"><div class="label">Berichten</div><div class="value" id="statMessages">—</div><div class="sublabel" id="statMessagesSub">laden...</div></div>
-      <div class="stat-card"><div class="label">Tokens</div><div class="value" id="statTokens">—</div><div class="sublabel" id="statTokensSub">laden...</div></div>
-      <div class="stat-card"><div class="label">Kosten</div><div class="value" id="statCost">—</div><div class="sublabel" id="statCostSub">laden...</div></div>
-      <div class="stat-card"><div class="label">Providers</div><div class="value" id="statProviders">—</div><div class="sublabel" id="statProvidersSub">laden...</div></div>
-      <div class="stat-card"><div class="label">API Calls</div><div class="value" id="statApiCalls">—</div><div class="sublabel" id="statApiCallsSub">laden...</div></div>
+      <div class="stat-card"><div class="label">Sessies</div><div class="value-wrap"><span class="value" id="statSessions">—</span><span class="trend" id="statSessionsTrend"></span></div><div class="sublabel" id="statSessionsSub">laden...</div></div>
+      <div class="stat-card"><div class="label">Berichten</div><div class="value-wrap"><span class="value" id="statMessages">—</span><span class="trend" id="statMessagesTrend"></span></div><div class="sublabel" id="statMessagesSub">laden...</div></div>
+      <div class="stat-card"><div class="label">Tokens</div><div class="value-wrap"><span class="value" id="statTokens">—</span><span class="trend" id="statTokensTrend"></span></div><div class="sublabel" id="statTokensSub">laden...</div></div>
+      <div class="stat-card"><div class="label">Kosten</div><div class="value-wrap"><span class="value" id="statCost">—</span><span class="trend" id="statCostTrend"></span></div><div class="sublabel" id="statCostSub">laden...</div></div>
+      <div class="stat-card"><div class="label">Providers</div><div class="value-wrap"><span class="value" id="statProviders">—</span><span class="trend" id="statProvidersTrend"></span></div><div class="sublabel" id="statProvidersSub">laden...</div></div>
+      <div class="stat-card"><div class="label">API Calls</div><div class="value-wrap"><span class="value" id="statApiCalls">—</span><span class="trend" id="statApiCallsTrend"></span></div><div class="sublabel" id="statApiCallsSub">laden...</div></div>
     </div>
     <div class="grid-stack" id="widgetGrid"></div>
   </div>
   <div id="panelConfig" class="hidden">
     <div class="config-grid">
       <div class="card config-section" id="configServer"><div class="card-header"><h3>🖥 Server Info</h3></div><div class="card-body" id="serverInfoBody">laden...</div></div>
-      <div class="card config-section" id="configCreds"><div class="card-header"><h3>🔑 API Keys & Credentials</h3></div><div class="card-body" id="credsBody">laden...</div></div>
+      <div class="card config-section" id="configCreds"><div class="card-header"><h3>🔑 API Keys &amp; Credentials</h3></div><div class="card-body" id="credsBody">laden...</div></div>
       <div class="card config-section" id="configPrefs"><div class="card-header"><h3>⚙ Voorkeuren</h3></div><div class="card-body"><form id="prefsForm"></form></div></div>
     </div>
   </div>
 </main>
+<svg width="0" height="0"><defs><linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs></svg>
 <script defer src="https://cdn.jsdelivr.net/npm/gridstack@10/dist/gridstack-all.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script defer src="dashboard.js"></script>
