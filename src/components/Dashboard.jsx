@@ -23,10 +23,21 @@ const POLL_INTERVAL = 5000;
 
 /**
  * Format metric value based on formatter type.
+ * @param {Object|null} metrics — system metrics from fetchMetrics()
+ * @param {string} metric — metric key (e.g. 'cpu', 'stats')
+ * @param {string|null} formatter — how to format the value
+ * @param {Object|null} stats — job stats from fetchStats() (needed for 'stats' metric)
  */
-function formatMetric(metrics, metric, formatter) {
+export function formatMetric(metrics, metric, formatter, stats) {
   if (!metrics) return 0;
-  const raw = metrics[metric];
+
+  // For 'stats' metric, look up from the stats object instead of metrics
+  let raw;
+  if (metric === 'stats') {
+    raw = stats;
+  } else {
+    raw = metrics[metric];
+  }
 
   switch (formatter) {
     case 'uptime':
@@ -48,7 +59,8 @@ function formatMetric(metrics, metric, formatter) {
   }
 }
 
-function formatBytes(bytesPerSec) {
+export function formatBytes(bytesPerSec) {
+  if (bytesPerSec == null || Number.isNaN(bytesPerSec)) return '0 B/s';
   if (bytesPerSec >= 1048576) return `${(bytesPerSec / 1048576).toFixed(1)} MB/s`;
   if (bytesPerSec >= 1024) return `${(bytesPerSec / 1024).toFixed(0)} KB/s`;
   return `${bytesPerSec} B/s`;
@@ -56,10 +68,20 @@ function formatBytes(bytesPerSec) {
 
 /**
  * Get the numeric display value for a widget.
+ * @param {Object|null} metrics — system metrics
+ * @param {Object} cfg — widget config (metric, formatter)
+ * @param {Object|null} stats — job stats (needed for 'stats' metric)
  */
-function getWidgetValue(metrics, cfg) {
+export function getWidgetValue(metrics, cfg, stats) {
   if (!metrics) return 0;
-  const raw = metrics[cfg.metric];
+
+  // For 'stats' metric, look up from the stats object instead of metrics
+  let raw;
+  if (cfg.metric === 'stats') {
+    raw = stats;
+  } else {
+    raw = metrics[cfg.metric];
+  }
 
   if (cfg.formatter) {
     switch (cfg.formatter) {
@@ -79,7 +101,7 @@ function getWidgetValue(metrics, cfg) {
 function WidgetContent({ cfg, metrics, history, printers, stats }) {
   switch (cfg.type) {
     case 'gauge': {
-      const val = getWidgetValue(metrics, cfg);
+      const val = getWidgetValue(metrics, cfg, stats);
       return (
         <GaugeWidget
           value={val}
@@ -96,8 +118,8 @@ function WidgetContent({ cfg, metrics, history, printers, stats }) {
       return <ChartWidget title={cfg.title} data={h || undefined} loading={!h && !metrics} />;
     }
     case 'stat': {
-      const formatted = formatMetric(metrics, cfg.metric, cfg.formatter);
-      const numericVal = getWidgetValue(metrics, cfg);
+      const formatted = formatMetric(metrics, cfg.metric, cfg.formatter, stats);
+      const numericVal = getWidgetValue(metrics, cfg, stats);
       const isNumeric = typeof formatted === 'number';
       return (
         <StatWidget
@@ -111,7 +133,7 @@ function WidgetContent({ cfg, metrics, history, printers, stats }) {
       );
     }
     case 'progress': {
-      const val = getWidgetValue(metrics, cfg);
+      const val = getWidgetValue(metrics, cfg, stats);
       return (
         <ProgressWidget
           value={val}
@@ -135,6 +157,7 @@ function WidgetContent({ cfg, metrics, history, printers, stats }) {
 export default function Dashboard() {
   const [currentView, setCurrentView] = useState('overview');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState('connecting'); // 'online' | 'offline' | 'connecting'
@@ -345,12 +368,23 @@ export default function Dashboard() {
       <div className="dashboard">
         <Sidebar
           currentView={currentView}
-          onNavigate={setCurrentView}
+          onNavigate={(view) => {
+            setCurrentView(view);
+            setMobileMenuOpen(false);
+          }}
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed((v) => !v)}
+          mobileOpen={mobileMenuOpen}
         />
         <main className="dashboard-main">
           <header className="dashboard-header">
+            <button
+              className="hamburger-btn"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              aria-label="Toggle menu"
+            >
+              ☰
+            </button>
             <div className="dashboard-header-left">
               <h1 className="dashboard-title">Dashboard</h1>
               <span className="dashboard-subtitle">

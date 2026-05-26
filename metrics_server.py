@@ -134,6 +134,10 @@ def get_network():
         tx_total = 0
         for line in lines[2:]:  # Skip headers
             if ':' in line:
+                iface = line.split(':')[0].strip()
+                # Skip loopback interface
+                if iface == 'lo':
+                    continue
                 parts = line.split(':')[1].split()
                 if len(parts) >= 10:
                     rx_total += int(parts[0])

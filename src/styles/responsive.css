@@ -66,17 +66,13 @@
     transform: translateX(0);
   }
 
-  /* Show hamburger */
-  .dashboard-header {
-    padding-left: var(--space-4);
-  }
-
-  .dashboard-header::before {
-    content: '☰';
-    font-size: var(--font-size-lg);
-    color: var(--text-secondary);
-    margin-right: var(--space-3);
-    cursor: pointer;
+  /* Overlay when sidebar is open */
+  .sidebar.sidebar-open + .dashboard-main::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: calc(var(--z-sidebar) - 1);
   }
 
   .dashboard-grid {

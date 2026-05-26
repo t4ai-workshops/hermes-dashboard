@@ -8,9 +8,9 @@ const NAV_ITEMS = [
   { id: 'settings', label: 'Settings', icon: '⛭' },
 ];
 
-export default function Sidebar({ currentView, onNavigate, collapsed = false, onToggleCollapse }) {
+export default function Sidebar({ currentView, onNavigate, collapsed = false, onToggleCollapse, mobileOpen = false }) {
   return (
-    <aside className={`sidebar ${collapsed ? 'sidebar-collapsed' : ''}`}>
+    <aside className={`sidebar ${collapsed ? 'sidebar-collapsed' : ''} ${mobileOpen ? 'sidebar-open' : ''}`}>
       <div className="sidebar-logo">
         <span className="logo-icon">◆</span>
         {!collapsed && <span className="logo-text">Hermes</span>}

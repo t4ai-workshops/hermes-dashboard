@@ -32,6 +32,31 @@
   gap: var(--space-3);
 }
 
+/* ── Hamburger menu button (mobile) ── */
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  padding: 6px 8px;
+  margin-right: var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+
+.hamburger-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface);
+}
+
+@media (max-width: 767px) {
+  .hamburger-btn {
+    display: block;
+  }
+}
+
 .dashboard-title {
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
