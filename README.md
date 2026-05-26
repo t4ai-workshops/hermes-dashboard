@@ -26,21 +26,34 @@ Real-time dashboard for Hermes Agent — system metrics, printer status, job mon
 ## Quick Start
 
 ```bash
+# All-in-one start (metrics server + Vite dev server)
+./start.sh
+
+# Or manually:
 # 1. Start the metrics server (reads real system data)
 python3 metrics_server.py --port 9192 &
 
 # 2. Start the React dev server (with Vite proxy)
+npm install --include=dev   # first time only
 npm run dev
 
 # 3. Open http://localhost:5173
 ```
+
+### Cross-Platform Note
+
+This project uses Vite 8 with rolldown which has platform-specific native bindings.
+If you see `Cannot find native binding` on startup, the `start.sh` script
+handles this automatically — it detects the mismatch and reinstalls dependencies.
+The `package-lock.json` is intentionally git-ignored so each platform generates
+its own.
 
 ### Production Build
 
 ```bash
 npm run build
 # Output in dist/ — serve with any static file server
-```
+npx vite preview   # Preview the production build locally
 
 ## Data Sources
 

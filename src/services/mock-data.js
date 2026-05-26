@@ -50,16 +50,19 @@ export function generatePrinters() {
       filament: pseudoRandom() > 0.5 ? 'PLA Green' : 'PETG Black',
       filename: pseudoRandom() > 0.5 ? 'gearbox_v2.gcode' : 'bracket_large.gcode',
     },
-    {
-      id: 'p2',
-      name: 'Prusa MK4',
-      status: pseudoRandom() > 0.6 ? 'idle' : 'printing',
-      progress: pseudoRandom() > 0.6 ? 0 : Math.floor(10 + pseudoRandom() * 80),
-      nozzleTemp: pseudoRandom() > 0.6 ? null : Math.floor(195 + pseudoRandom() * 20),
-      bedTemp: pseudoRandom() > 0.6 ? null : Math.floor(50 + pseudoRandom() * 15),
-      filament: pseudoRandom() > 0.6 ? null : 'ABS White',
-      filename: pseudoRandom() > 0.6 ? null : 'case_top.gcode',
-    },
+    (() => {
+      const isIdle = pseudoRandom() > 0.6;
+      return {
+        id: 'p2',
+        name: 'Prusa MK4',
+        status: isIdle ? 'idle' : 'printing',
+        progress: isIdle ? 0 : Math.floor(10 + pseudoRandom() * 80),
+        nozzleTemp: isIdle ? null : Math.floor(195 + pseudoRandom() * 20),
+        bedTemp: isIdle ? null : Math.floor(50 + pseudoRandom() * 15),
+        filament: isIdle ? null : 'ABS White',
+        filename: isIdle ? null : 'case_top.gcode',
+      };
+    })(),
   ];
 }
 
