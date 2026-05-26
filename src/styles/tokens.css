@@ -1,0 +1,123 @@
+/* ============================================================
+   Hermes Dashboard — Design Tokens
+   Bambubuddy dark theme. 42 color tokens.
+   ============================================================ */
+
+:root {
+  /* ── Background colors ── */
+  --bg-root:        #0a0e14;
+  --bg-surface:     #12171f;
+  --bg-elevated:    #1a2030;
+  --bg-overlay:     #222a38;
+  --bg-tooltip:     #2a3244;
+  --bg-input:       #161c28;
+
+  /* ── Accent colors ── */
+  --accent-primary:       #4ade80;  /* green-400 */
+  --accent-primary-hover: #22c55e;
+  --accent-primary-muted: rgba(74, 222, 128, 0.15);
+
+  --accent-secondary:     #38bdf8;  /* sky-400 */
+  --accent-secondary-hover: #0ea5e9;
+  --accent-secondary-muted: rgba(56, 189, 248, 0.12);
+
+  --accent-warning:      #fbbf24;  /* amber-400 */
+  --accent-warning-muted: rgba(251, 191, 36, 0.15);
+  --accent-critical:     #ef4444;  /* red-500 */
+  --accent-critical-muted: rgba(239, 68, 68, 0.15);
+
+  /* ── Text colors ── */
+  --text-primary:    #e2e8f0;
+  --text-secondary:  #94a3b8;
+  --text-tertiary:   #64748b;
+  --text-inverse:    #0a0e14;
+  --text-link:       #4ade80;
+  --text-link-hover: #86efac;
+
+  /* ── Border colors ── */
+  --border-subtle:   rgba(255, 255, 255, 0.06);
+  --border-default:  rgba(255, 255, 255, 0.10);
+  --border-strong:   rgba(255, 255, 255, 0.15);
+  --border-accent:   rgba(74, 222, 128, 0.30);
+
+  /* ── Shadow / glow ── */
+  --shadow-sm:   0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md:   0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg:   0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow-green: 0 0 12px rgba(74, 222, 128, 0.15);
+  --shadow-glow-red:   0 0 12px rgba(239, 68, 68, 0.15);
+
+  /* ── Status colors ── */
+  --status-ok:      #4ade80;
+  --status-warn:    #fbbf24;
+  --status-crit:    #ef4444;
+  --status-idle:    #64748b;
+  --status-active:  #38bdf8;
+
+  /* ── Typography ── */
+  --font-sans:   'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:   'JetBrains Mono', 'Fira Code', monospace;
+  --font-size-xs:    0.75rem;   /* 12px */
+  --font-size-sm:    0.8125rem; /* 13px */
+  --font-size-base:  0.875rem;  /* 14px */
+  --font-size-md:    1rem;      /* 16px */
+  --font-size-lg:    1.125rem;  /* 18px */
+  --font-size-xl:    1.25rem;   /* 20px */
+  --font-size-2xl:   1.5rem;    /* 24px */
+  --font-size-3xl:   2rem;      /* 32px */
+  --font-size-4xl:   2.5rem;    /* 40px */
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight:  1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  /* ── Spacing ── */
+  --space-1:  0.25rem;  /* 4px */
+  --space-2:  0.5rem;   /* 8px */
+  --space-3:  0.75rem;  /* 12px */
+  --space-4:  1rem;     /* 16px */
+  --space-5:  1.25rem;  /* 20px */
+  --space-6:  1.5rem;   /* 24px */
+  --space-8:  2rem;     /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+
+  /* ── Border radius ── */
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+  --radius-full: 9999px;
+
+  /* ── Transitions ── */
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow:   400ms ease;
+
+  /* ── Layout ── */
+  --sidebar-width:      240px;
+  --sidebar-collapsed:  72px;
+  --header-height:      48px;
+
+  /* ── Z-index ── */
+  --z-sidebar:   100;
+  --z-overlay:   200;
+  --z-modal:     300;
+  --z-tooltip:   400;
+}
+
+/* ── Gradient catalog (from design spec) ── */
+:root {
+  --gradient-card:        linear-gradient(135deg, var(--bg-surface), var(--bg-elevated));
+  --gradient-card-hover:  linear-gradient(135deg, var(--bg-elevated), var(--bg-overlay));
+  --gradient-header:      linear-gradient(180deg, rgba(74,222,128,0.08), transparent);
+  --gradient-sidebar:     linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-elevated) 100%);
+  --gradient-gauge-ok:    conic-gradient(from 180deg, var(--accent-primary), #166534, var(--accent-primary));
+  --gradient-gauge-warn:  conic-gradient(from 180deg, var(--accent-warning), #78350f, var(--accent-warning));
+  --gradient-gauge-crit:  conic-gradient(from 180deg, var(--accent-critical), #7f1d1d, var(--accent-critical));
+}

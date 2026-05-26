@@ -1,0 +1,139 @@
+/* ============================================================
+   Hermes Dashboard — Responsive Breakpoints
+   5 breakpoints: 1200, 1024, 768, 480, 320
+   Mobile-first approach — base styles are mobile, scales up.
+   ============================================================ */
+
+/* ── ≥ 1200px: Full desktop ── */
+@media (min-width: 1200px) {
+  .dashboard-grid {
+    /* 10 columns at full width */
+  }
+}
+
+/* ── 1024–1199px: Small desktop / landscape tablet ── */
+@media (max-width: 1199px) {
+  .dashboard-grid {
+    /* GridStack auto-adjusts to 8 cols via JS — this is fallback */
+  }
+}
+
+/* ── 768–1023px: Tablet ── */
+@media (max-width: 1023px) {
+  .sidebar {
+    width: var(--sidebar-collapsed);
+    min-width: var(--sidebar-collapsed);
+  }
+
+  .sidebar .nav-label {
+    /* Show labels in collapsed mode on tablet */
+    position: static;
+    width: auto;
+    height: auto;
+    clip: auto;
+    overflow: visible;
+    font-size: var(--font-size-xs);
+  }
+
+  .sidebar .sidebar-logo {
+    justify-content: center;
+    padding: var(--space-3);
+  }
+
+  .sidebar .nav-item {
+    justify-content: center;
+    padding: var(--space-2);
+  }
+
+  .dashboard-title {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* ── 480–767px: Large phone ── */
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: var(--z-sidebar);
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  /* Show hamburger */
+  .dashboard-header {
+    padding-left: var(--space-4);
+  }
+
+  .dashboard-header::before {
+    content: '☰';
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+    margin-right: var(--space-3);
+    cursor: pointer;
+  }
+
+  .dashboard-grid {
+    padding: var(--space-2);
+  }
+
+  .stat-value {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+/* ── ≤ 480px: Small phone ── */
+@media (max-width: 479px) {
+  .dashboard-header {
+    padding: 0 var(--space-3);
+    height: 40px;
+  }
+
+  .dashboard-title {
+    font-size: var(--font-size-sm);
+  }
+
+  .dashboard-subtitle {
+    display: none;
+  }
+
+  .dashboard-grid {
+    padding: var(--space-1);
+  }
+
+  .stat-value {
+    font-size: var(--font-size-xl);
+  }
+
+  .gauge-widget canvas {
+    width: 140px;
+    height: 110px;
+  }
+
+  .progress-widget canvas {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* ── ≤ 320px: Tiny screens ── */
+@media (max-width: 319px) {
+  .dashboard-grid {
+    padding: 4px;
+  }
+
+  .stat-widget {
+    min-height: 80px;
+    padding: var(--space-2);
+  }
+
+  .stat-value {
+    font-size: var(--font-size-lg);
+  }
+}

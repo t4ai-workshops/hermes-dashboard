@@ -1,0 +1,113 @@
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  height: 100vh;
+  background: var(--gradient-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--transition-normal), min-width var(--transition-normal);
+  overflow: hidden;
+  z-index: var(--z-sidebar);
+}
+
+.sidebar-collapsed {
+  width: var(--sidebar-collapsed);
+  min-width: var(--sidebar-collapsed);
+}
+
+/* ── Logo ── */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  height: var(--header-height);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.logo-icon {
+  font-size: var(--font-size-xl);
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.sidebar-collapsed .sidebar-logo {
+  justify-content: center;
+  padding: var(--space-3);
+}
+
+/* ── Navigation ── */
+.sidebar-nav {
+  flex: 1;
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  background: var(--bg-overlay);
+  color: var(--text-primary);
+}
+
+.nav-item.active {
+  background: var(--accent-primary-muted);
+  color: var(--accent-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.nav-icon {
+  font-size: var(--font-size-md);
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+.sidebar-collapsed .nav-item {
+  justify-content: center;
+  padding: var(--space-2);
+}
+
+/* ── Collapse toggle ── */
+.sidebar-collapse-btn {
+  margin: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.sidebar-collapse-btn:hover {
+  background: var(--bg-overlay);
+  color: var(--text-primary);
+}
